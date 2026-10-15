@@ -1,0 +1,29 @@
+﻿@model library.Models.Member
+
+<h1>Edit member</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="MemberId" />
+
+    <div class="mb-3">
+        <label asp-for="FullName" class="form-label">Name</label>
+        <input asp-for="FullName" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" type="text" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="MemberType" class="form-label">Type</label>
+        <select asp-for="MemberType" class="form-select" required>
+            <option value="Regular">Regular</option>
+            <option value="Student">Student</option>
+            <option value="Faculty">Faculty</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save changes</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
