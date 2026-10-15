@@ -1,31 +1,187 @@
+/* ===== Library theme ===== */
+:root {
+    --library-navy: #20354a;
+    --library-teal: #2a817b;
+    --library-cream: #f6f4ee;
+    --library-white: #ffffff;
+    --library-text: #293744;
+    --library-border: #dce5e3;
+}
+
+/* ===== Page layout ===== */
 html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    min-height: 100%;
+    position: relative;
 }
 
 body {
-  margin-bottom: 60px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    background-color: var(--library-cream);
+    color: var(--library-text);
+    font-family: "Segoe UI", sans-serif;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+    body > header {
+        flex-shrink: 0;
+    }
+
+    body > .container {
+        flex: 1 0 auto;
+    }
+
+    body > footer {
+        flex-shrink: 0;
+        width: 100%;
+        margin-top: auto;
+        background-color: var(--library-white);
+        padding: 0;
+        line-height: 1;
+        border-top: 1px solid var(--library-border);
+    }
+
+footer .container {
+    color: #647581;
+    font-size: 1rem;
+    padding-top: 0;
+    padding-bottom: 0;
+    line-height: 1;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+    footer .container a {
+        font-size: inherit;
+    }
+
+/* ===== Navigation ===== */
+.navbar {
+    background-color: var(--library-navy) !important;
 }
+
+    .navbar .navbar-brand,
+    .navbar .nav-link {
+        color: var(--library-white) !important;
+    }
+
+        .navbar .nav-link:hover,
+        .navbar .navbar-brand:hover {
+            color: #8de0d3 !important;
+        }
+
+/* ===== Page headings ===== */
+h1, h2, h3 {
+    color: var(--library-navy);
+    font-weight: 700;
+}
+
+h1 {
+    margin: 1.5rem 0;
+}
+
+/* ===== Main content ===== */
+.container main {
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+}
+
+/* ===== Cards ===== */
+.library-card {
+    background: var(--library-white);
+    border: 1px solid var(--library-border);
+    border-radius: 14px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 14px rgba(32, 53, 74, 0.06);
+    height: 100%;
+}
+
+    .library-card:hover {
+        box-shadow: 0 7px 18px rgba(32, 53, 74, 0.12);
+    }
+
+.card-label {
+    color: #647581;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.card-value {
+    color: var(--library-navy);
+    font-size: 1.1rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+/* ===== Buttons ===== */
+.btn-primary {
+    background-color: var(--library-teal);
+    border-color: var(--library-teal);
+}
+
+    .btn-primary:hover {
+        background-color: #216761;
+        border-color: #216761;
+    }
+
+.btn-warning {
+    background-color: #f0d99a;
+    border-color: #f0d99a;
+    color: #493b1e;
+}
+
+.btn-danger {
+    background-color: #b94d50;
+    border-color: #b94d50;
+}
+
+/* ===== Forms ===== */
+.library-form {
+    max-width: 650px;
+    background: var(--library-white);
+    border: 1px solid var(--library-border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 14px rgba(32, 53, 74, 0.06);
+}
+
+.form-control,
+.form-select {
+    border-color: #cbd8d7;
+    border-radius: 8px;
+    padding: 0.65rem 0.8rem;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--library-teal);
+        box-shadow: 0 0 0 0.2rem rgba(42, 129, 123, 0.15);
+    }
+
+label {
+    color: var(--library-navy);
+    font-weight: 600;
+}
+
+/* ===== Tables ===== */
+.table {
+    background-color: var(--library-white);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+    .table thead th {
+        background-color: var(--library-navy);
+        color: var(--library-white);
+        border: none;
+        padding: 1rem;
+    }
+
+    .table tbody td {
+        padding: 0.9rem 1rem;
+        vertical-align: middle;
+    }
+
+    .table tbody tr:hover {
+        background-color: #eaf4f1;
+    }
