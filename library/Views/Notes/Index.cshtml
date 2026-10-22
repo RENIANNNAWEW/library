@@ -1,0 +1,38 @@
+﻿@model IEnumerable<library.Models.Note>
+
+@{
+    ViewData["Title"] = "Notes";
+}
+
+<h1>Library Notes</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add Note</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Body</th>
+            <th>Date Created</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var note in Model)
+        {
+            <tr>
+                <td>@note.Title</td>
+                <td>@(note.Body ?? "(No body)")</td>
+                <td>@note.CreatedOn.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-id="@note.NoteId">Edit</a> |
+                    <a asp-action="Delete"
+                       asp-route-id="@note.NoteId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

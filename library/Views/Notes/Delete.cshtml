@@ -1,0 +1,22 @@
+﻿@model library.Models.Note
+
+@{
+    ViewData["Title"] = "Delete Note";
+}
+
+<h1>Delete Note</h1>
+
+<h3>Are you sure you want to delete this note?</h3>
+
+<div class="mb-3">
+    <p><strong>Title:</strong> @Model.Title</p>
+    <p><strong>Body:</strong> @(Model.Body ?? "(No body)")</p>
+    <p><strong>Created:</strong> @Model.CreatedOn.ToString("yyyy-MM-dd")</p>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" name="id" value="@Model.NoteId" />
+
+    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
