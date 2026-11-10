@@ -60,4 +60,74 @@ public class LoanRepository
 
         return loans;
     }
+
+    // BORROW: lend one book unless the member has reached the limit.
+    public async Task<bool> BorrowAsync(
+        long memberId,
+        long bookId,
+        int daysAllowed)
+    {
+        // 1. Open one connection.
+        await using var connection =
+            await _dataSource.OpenConnectionAsync();
+
+        // 2. Start a transaction.
+        await using var transaction =
+            await connection.BeginTransactionAsync();
+
+        // 3. Lock the member's row.
+        await using (var lockMember = new NpgsqlCommand(
+            "SELECT member_id FROM lending.member WHERE member_id = @member_id FOR UPDATE;",
+            connection,
+            transaction))
+        {
+            lockMember.Parameters.AddWithValue("member_id", memberId);
+
+            await lockMember.ExecuteNonQueryAsync();
+        }
+
+        // 4. Count the books currently out.
+        long openLoans;
+
+        await using (var count = new NpgsqlCommand(
+            "SELECT COUNT(*) FROM lending.loan WHERE member_id = @member_id AND returned_on IS NULL;",
+            connection,
+            transaction))
+        {
+            count.Parameters.AddWithValue("member_id", memberId);
+
+            openLoans = Convert.ToInt64(
+                await count.ExecuteScalarAsync());
+        }
+
+        // 5. Check if the member reached the limit.
+        if (openLoans >= MaxOpenLoans)
+        {
+            // 6. Undo the transaction.
+            await transaction.RollbackAsync();
+
+            // 7. Nothing was borrowed.
+            return false;
+        }
+
+        // 8. Insert the new loan.
+        await using (var insert = new NpgsqlCommand(
+            "INSERT INTO lending.loan (member_id, book_id, days_allowed) VALUES (@member_id, @book_id, @days_allowed);",
+            connection,
+            transaction))
+        {
+            insert.Parameters.AddWithValue("member_id", memberId);
+            insert.Parameters.AddWithValue("book_id", bookId);
+            insert.Parameters.AddWithValue("days_allowed", daysAllowed);
+
+            await insert.ExecuteNonQueryAsync();
+        }
+
+        // 9. Save the transaction permanently.
+        await transaction.CommitAsync();
+
+        // 10. Report success.
+        return true;
+    }
+
 }
