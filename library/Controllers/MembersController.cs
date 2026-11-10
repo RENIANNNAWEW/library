@@ -1,4 +1,6 @@
-﻿using library.Data;
+﻿
+using Npgsql;
+using library.Data;
 using library.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,21 +15,21 @@ public class MembersController : Controller
         _members = members;
     }
 
-    // Task 13.10: Display the list of members
+    // Display the list of members
     public async Task<IActionResult> Index()
     {
         var members = await _members.GetAllAsync();
         return View(members);
     }
 
-    // Task 14.2: Create, GET
+    // Create, GET
     [HttpGet]
     public IActionResult Create()
     {
         return View(new Member());
     }
 
-    // Task 14.3: Create, POST
+    // Create, POST
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Member member)
@@ -36,7 +38,7 @@ public class MembersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    // Task 15.3: Edit, GET
+    // Edit, GET
     [HttpGet]
     public async Task<IActionResult> Edit(long id)
     {
@@ -50,7 +52,7 @@ public class MembersController : Controller
         return View(member);
     }
 
-    // Task 15.4: Edit, POST
+    // Edit, POST
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Member member)
@@ -59,22 +61,44 @@ public class MembersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    // Delete, GET
     [HttpGet]
     public async Task<IActionResult> Delete(long id)
     {
         var member = await _members.GetByIdAsync(id);
 
         if (member == null)
+        {
             return NotFound();
+        }
 
         return View(member);
     }
 
+    // Delete, POST
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(long id)
     {
-        await _members.DeleteAsync(id);
+        try
+        {
+            await _members.DeleteAsync(id);
+        }
+        catch (PostgresException ex) when (
+            ex.SqlState == PostgresErrorCodes.ForeignKeyViolation)
+        {
+            var member = await _members.GetByIdAsync(id);
+
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Error = "This member has loans on record, so the database will not delete them.";
+
+            return View("Delete", member);
+        }
+
         return RedirectToAction(nameof(Index));
     }
 }
