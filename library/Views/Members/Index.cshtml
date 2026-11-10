@@ -1,4 +1,5 @@
-﻿@model List<library.Models.Member>
+﻿
+@model List<library.Models.Member>
 
 @{
     ViewData["Title"] = "Members";
@@ -40,6 +41,13 @@
                     <span class="card-label">Membership type</span><br />
                     <span class="badge rounded-pill text-bg-light border">
                         @member.MemberType
+                    </span>
+                </p>
+
+                <p class="mb-3">
+                    <span class="card-label">Books out</span><br />
+                    <span class="badge rounded-pill text-bg-light border">
+                        @member.OpenLoans
                     </span>
                 </p>
 
