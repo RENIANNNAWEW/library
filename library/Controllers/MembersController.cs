@@ -9,16 +9,22 @@ namespace library.Controllers;
 public class MembersController : Controller
 {
     private readonly MemberRepository _members;
+    private readonly LoanRepository _loans;
 
-    public MembersController(MemberRepository members)
+    // ASP.NET Core hands in the repositories.
+    public MembersController(
+        MemberRepository members,
+        LoanRepository loans)
     {
         _members = members;
+        _loans = loans;
     }
 
     // Display the list of members
     public async Task<IActionResult> Index()
     {
         var members = await _members.GetAllAsync();
+
         return View(members);
     }
 
@@ -34,32 +40,26 @@ public class MembersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Member member)
     {
-        // 1. Check if a rule on the form was broken.
         if (!ModelState.IsValid)
         {
-            // 2. Show the form again, with what was typed.
             return View(member);
         }
 
         try
         {
-            // 3. Save the new member.
             await _members.AddAsync(member);
         }
         catch (PostgresException ex) when (
             ex.SqlState == PostgresErrorCodes.UniqueViolation)
         {
-            // 5. Put a message under the Email box.
             ModelState.AddModelError(
                 "Email",
                 "Another member already uses this email."
             );
 
-            // 6. Show the form again, with what was typed.
             return View(member);
         }
 
-        // 7. The member was saved: go back to the list.
         return RedirectToAction(nameof(Index));
     }
 
@@ -77,41 +77,33 @@ public class MembersController : Controller
         return View(member);
     }
 
-
-    // POST /Members/Edit/5 : the changed form was submitted.
+    // Edit, POST
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Member member)
     {
-        // 1. Check if a rule was broken.
         if (!ModelState.IsValid)
         {
-            // 2. Show the form again.
             return View(member);
         }
 
         try
         {
-            // 3. Save the changes.
             await _members.UpdateAsync(member);
         }
         catch (PostgresException ex) when (
             ex.SqlState == PostgresErrorCodes.UniqueViolation)
         {
-            // 5. Put a message under the Email box.
             ModelState.AddModelError(
                 "Email",
                 "Another member already uses this email."
             );
 
-            // 6. Show the form again.
             return View(member);
         }
 
-        // 7. The changes were saved.
         return RedirectToAction(nameof(Index));
     }
-
 
     // Delete, GET
     [HttpGet]
@@ -152,5 +144,24 @@ public class MembersController : Controller
         }
 
         return RedirectToAction(nameof(Index));
+    }
+
+    // GET /Members/Details/5
+    public async Task<IActionResult> Details(long id)
+    {
+        var member = await _members.GetByIdAsync(id);
+
+        if (member == null)
+        {
+            return NotFound();
+        }
+
+        var details = new MemberDetails
+        {
+            Member = member,
+            Loans = await _loans.GetByMemberAsync(id)
+        };
+
+        return View(details);
     }
 }

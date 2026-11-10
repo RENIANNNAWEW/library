@@ -44,6 +44,12 @@
                 </p>
 
                 <div class="d-flex gap-2 flex-wrap">
+                    <a asp-action="Details"
+                       asp-route-id="@member.MemberId"
+                       class="btn btn-sm btn-outline-primary">
+                        Loans
+                    </a>
+
                     <a asp-action="Edit"
                        asp-route-id="@member.MemberId"
                        class="btn btn-sm btn-warning">
@@ -66,6 +72,9 @@
     <div class="library-card text-center mt-3">
         <h3>No members yet</h3>
         <p>Start building your library community by adding a member.</p>
-        <a asp-action="Create" class="btn btn-primary">Add a member</a>
+
+        <a asp-action="Create" class="btn btn-primary">
+            Add a member
+        </a>
     </div>
 }
