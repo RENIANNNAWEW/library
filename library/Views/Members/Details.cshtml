@@ -5,52 +5,77 @@
     ViewData["Title"] = Model.Member.FullName;
 }
 
-<h1 class="mb-1">@Model.Member.FullName</h1>
+<div class="p-4 mb-4 rounded-3 bg-dark text-white shadow-sm">
+    <h1 class="mb-2">@Model.Member.FullName</h1>
 
-<p class="text-muted">
-    @Model.Member.MemberType ·
-    @(Model.Member.Email ?? "no email")
-</p>
+    <p class="mb-1">
+        @Model.Member.MemberType
+    </p>
 
-<h2 class="h5 mt-4">Loans</h2>
+    <small>
+        @(Model.Member.Email ?? "No email provided")
+    </small>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0">Borrowing History</h2>
+
+    <span class="badge rounded-pill text-bg-primary">
+        @Model.Loans.Count loans
+    </span>
+</div>
 
 @if (Model.Loans.Count == 0)
 {
-    <p>This member has never borrowed a book.</p>
+    <div class="alert alert-info shadow-sm">
+        <h5 class="alert-heading">No borrowing history</h5>
+        <p class="mb-0">
+            This member has never borrowed a book.
+        </p>
+    </div>
 }
 else
 {
-    <table class="table table-striped align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>Book</th>
-                <th>Loaned</th>
-                <th>Returned</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach (var loan in Model.Loans)
-            {
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle shadow-sm">
+            <thead class="table-dark">
                 <tr>
-                    <td>@loan.BookTitle</td>
-
-                    <td>
-                        @loan.LoanedOn.ToString("yyyy-MM-dd")
-                    </td>
-
-                    <td>
-                        @(loan.ReturnedOn?.ToString("yyyy-MM-dd") ?? "—")
-                    </td>
-
-                    <td>@loan.Status</td>
+                    <th>Book</th>
+                    <th>Loaned</th>
+                    <th>Returned</th>
+                    <th>Status</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+
+            <tbody>
+                @foreach (var loan in Model.Loans)
+                {
+                    <tr>
+                        <td class="fw-semibold">
+                            @loan.BookTitle
+                        </td>
+
+                        <td>
+                            @loan.LoanedOn.ToString("yyyy-MM-dd")
+                        </td>
+
+                        <td>
+                            @(loan.ReturnedOn?.ToString("yyyy-MM-dd") ?? "—")
+                        </td>
+
+                        <td>
+                            <span class="badge @(loan.Status == "Overdue" ? "text-bg-danger" : loan.Status == "Out" ? "text-bg-warning" : "text-bg-success")">
+                                @loan.Status
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 
-<a asp-action="Index" class="btn btn-link px-0">
-    Back to members
+<a asp-action="Index" class="btn btn-outline-secondary mt-3">
+    ← Back to Members
 </a>
+
