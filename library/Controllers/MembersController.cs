@@ -34,7 +34,32 @@ public class MembersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Member member)
     {
-        await _members.AddAsync(member);
+        // 1. Check if a rule on the form was broken.
+        if (!ModelState.IsValid)
+        {
+            // 2. Show the form again, with what was typed.
+            return View(member);
+        }
+
+        try
+        {
+            // 3. Save the new member.
+            await _members.AddAsync(member);
+        }
+        catch (PostgresException ex) when (
+            ex.SqlState == PostgresErrorCodes.UniqueViolation)
+        {
+            // 5. Put a message under the Email box.
+            ModelState.AddModelError(
+                "Email",
+                "Another member already uses this email."
+            );
+
+            // 6. Show the form again, with what was typed.
+            return View(member);
+        }
+
+        // 7. The member was saved: go back to the list.
         return RedirectToAction(nameof(Index));
     }
 
@@ -52,14 +77,41 @@ public class MembersController : Controller
         return View(member);
     }
 
-    // Edit, POST
+
+    // POST /Members/Edit/5 : the changed form was submitted.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Member member)
     {
-        await _members.UpdateAsync(member);
+        // 1. Check if a rule was broken.
+        if (!ModelState.IsValid)
+        {
+            // 2. Show the form again.
+            return View(member);
+        }
+
+        try
+        {
+            // 3. Save the changes.
+            await _members.UpdateAsync(member);
+        }
+        catch (PostgresException ex) when (
+            ex.SqlState == PostgresErrorCodes.UniqueViolation)
+        {
+            // 5. Put a message under the Email box.
+            ModelState.AddModelError(
+                "Email",
+                "Another member already uses this email."
+            );
+
+            // 6. Show the form again.
+            return View(member);
+        }
+
+        // 7. The changes were saved.
         return RedirectToAction(nameof(Index));
     }
+
 
     // Delete, GET
     [HttpGet]
