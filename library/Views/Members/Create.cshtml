@@ -1,16 +1,22 @@
-﻿@model library.Models.Member
+﻿
+@model library.Models.Member
 
 <h1>Add a member</h1>
 
 <form asp-action="Create" method="post">
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
     <div class="mb-3">
         <label asp-for="FullName" class="form-label">Name</label>
         <input asp-for="FullName" class="form-control" required />
+        <span asp-validation-for="FullName" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="Email" class="form-label">Email</label>
         <input asp-for="Email" type="text" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
@@ -20,11 +26,14 @@
             <option value="Student">Student</option>
             <option value="Faculty">Faculty</option>
         </select>
+        <span asp-validation-for="MemberType" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Add a member</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-    @section Scripts {
+
+</form>
+
+@section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-</form>
