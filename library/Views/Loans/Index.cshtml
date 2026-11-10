@@ -1,5 +1,4 @@
-﻿
-@model List<LoanView>
+﻿@model List<LoanView>
 
 @{
     ViewData["Title"] = "Loans";
@@ -24,7 +23,7 @@
             <th>Loaned</th>
             <th>Due</th>
             <th>Status</th>
-            <th style="width:7rem"></th>
+            <th style="width: 7rem;"></th>
         </tr>
     </thead>
 
@@ -44,7 +43,19 @@
                 </td>
 
                 <td class="text-end">
-                    @* Task 9 adds the Return button here. *@
+                    @if (loan.ReturnedOn == null)
+                    {
+                        <form asp-action="Return"
+                              asp-route-id="@loan.LoanId"
+                              method="post"
+                              class="d-inline">
+
+                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                Return
+                            </button>
+
+                        </form>
+                    }
                 </td>
             </tr>
         }

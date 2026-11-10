@@ -130,4 +130,24 @@ public class LoanRepository
         return true;
     }
 
+
+    // RETURN: mark a loan as returned today.
+    public async Task ReturnAsync(long loanId)
+    {
+        // 1. SQL for returning a book.
+        const string sql =
+            "UPDATE lending.loan SET returned_on = CURRENT_DATE " +
+            "WHERE loan_id = @id AND returned_on IS NULL;";
+
+        // 2. Create the command.
+        await using var command =
+            _dataSource.CreateCommand(sql);
+
+        // 3. Give the command the loan ID.
+        command.Parameters.AddWithValue("id", loanId);
+
+        // 4. Execute the command.
+        await command.ExecuteNonQueryAsync();
+    }
+
 }
